@@ -289,7 +289,7 @@ def test_complex_annotation2():
 
 
     verifydf = df[df['Duration'] > 60]
-    print("Sup = {}".format(df1.columns))
+
     assert df1['marketing__1__calls__xx__total'].sum() == verifydf['Duration'].sum()     
     assert df1['In'].nunique() == uniques 
     assert len(df1.columns) == 4
