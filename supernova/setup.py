@@ -3,7 +3,8 @@ from setuptools import find_packages
 from setuptools import setup
 
 requires = [
-    'pandas==0.22.0'
+    'pandas==0.22.0',
+    'pyspark'
 ]
 
 tests_requires = [

@@ -1,3 +1,0 @@
-[Contrib.asset]
-hallmarkfe = hallmarkfe
-
