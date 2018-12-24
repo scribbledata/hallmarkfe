@@ -283,25 +283,18 @@ def test_complex_annotation2():
 
         # Now return the 
         return pd.Series(features)
-    
+
     df1 = df.groupby(["In", "CallDate"]).apply(summarize)
     df1 = df1.reset_index()
-
-
     verifydf = df[df['Duration'] > 60]
 
-    assert df1['marketing__1__calls__xx__total'].sum() == verifydf['Duration'].sum()     
+    assert (df1.loc[df1['level_2'] == 'marketing__1__calls__xx__total'].sum()[0]) == verifydf['Duration'].sum()     
     assert df1['In'].nunique() == uniques 
     assert len(df1.columns) == 4
 
-    #print("DF1")
-    #print(df1.head())
 
-    #=> 
-    
     def summarize2(rows):
         rows = rows.to_dict('records')
-
         state = hallmarkfe.HMFEAtomicState()
         state.set_data('memberdates', rows) 
 
@@ -309,7 +302,6 @@ def test_complex_annotation2():
         mgr2.process(state) 
 
         features = state.get_all_features()
-
         # Now return the 
         return pd.Series(features)
     
