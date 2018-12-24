@@ -1,6 +1,6 @@
 import sys 
 import pytest 
-import hallmarkfe 
+import  hallmarkfe.supernova  as hallmarkfe
 
 def test_processor(): 
     """

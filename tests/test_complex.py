@@ -4,7 +4,7 @@ import json
 import random 
 import pytest 
 import pandas as pd 
-import hallmarkfe 
+import hallmarkfe.supernova as hallmarkfe
 
 thisdir = os.path.abspath(os.path.dirname(__file__))
 
