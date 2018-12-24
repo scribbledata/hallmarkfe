@@ -60,7 +60,7 @@ class HMFEProcessor(object):
         self.conf = conf
         
         if 'name' not in conf or 'owner' not in conf: 
-            raise Exception("Missing 'name' or 'owner' in Proessor configuration") 
+            raise Exception("Missing 'name' or 'owner' in Processor configuration") 
 
         self.name  = conf['name']
         self.owner = conf['owner']
@@ -406,7 +406,7 @@ class TableRuleMixin(object):
 
         return "Unknown condition: {}".format(match)
 
-class HMFERuleBasedProcessor(FEProcessor, TableRuleMixin):
+class HMFERuleBasedProcessor(HMFEProcessor, TableRuleMixin):
     """
     Given a set of rules it apply the rules to rows
     """

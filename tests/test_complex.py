@@ -54,7 +54,8 @@ def test_complex_annotation():
     })
     myproc = SimpleProcessor(conf={
         'name': 'simple1',
-        'owner': 'Dilloy'         
+        'owner': 'Dilloy',
+        'manager': 'Manager'       
     })
     mgr.add_processor('simple1', myproc) 
 
@@ -249,7 +250,8 @@ def test_complex_annotation2():
 
     myproc1 = SimpleRuleProcessor1(conf={
         'name': 'complex1',
-        'owner': 'marketing' 
+        'owner': 'marketing',
+        'manager': 'manager'
     })
 
     mgr1.add_processor('complex1', myproc1) 
@@ -259,7 +261,8 @@ def test_complex_annotation2():
     })
     myproc2 = SimpleRuleProcessor2(conf={
         'name': 'complex2',
-        'owner': 'marketing' 
+        'owner': 'marketing',
+        'manager': 'manager'
     })
     mgr2.add_processor('complex2', myproc2) 
 
@@ -284,7 +287,9 @@ def test_complex_annotation2():
     df1 = df.groupby(["In", "CallDate"]).apply(summarize)
     df1 = df1.reset_index()
 
+
     verifydf = df[df['Duration'] > 60]
+    print("Sup = {}".format(df1.columns))
     assert df1['marketing__1__calls__xx__total'].sum() == verifydf['Duration'].sum()     
     assert df1['In'].nunique() == uniques 
     assert len(df1.columns) == 4

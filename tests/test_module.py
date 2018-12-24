@@ -9,7 +9,8 @@ def test_processor():
 
     proc = hallmarkfe.HMFEProcessor(conf={
         'name': 'hello',
-        'owner': 'Brian'
+        'owner': 'Brian',
+        'manager':'TestManager'
     }) 
 
     
