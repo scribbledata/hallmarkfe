@@ -7,7 +7,7 @@ def test_processor():
     Test the processor class 
     """
 
-    proc = hallmarkfe.FEProcessor(conf={
+    proc = hallmarkfe.HMFEProcessor(conf={
         'name': 'hello',
         'owner': 'Brian'
     }) 
@@ -17,7 +17,7 @@ def test_state():
     """
     Test state access 
     """
-    state = hallmarkfe.FEAtomicState()
+    state = hallmarkfe.HMFEAtomicState()
 
     # 
     state.set_feature('hello', 'value')
@@ -28,7 +28,7 @@ def test_data():
     """
     Test data storage 
     """
-    state = hallmarkfe.FEAtomicState()
+    state = hallmarkfe.HMFEAtomicState()
 
     # Value could be any time 
     state.set_data('hello', 'value')

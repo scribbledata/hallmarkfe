@@ -16,7 +16,7 @@ try:
 except:
     import toolz 
 
-class FEAtomicState(object):
+class HMFEAtomicState(object):
     """
     Feature State for a unit entity such as a customer. This is updated
     by feature engineering libraries.
@@ -50,7 +50,7 @@ class FEAtomicState(object):
         self.state['data'][name] = value
 
 
-class FEProcessor(object):
+class HMFEProcessor(object):
     """
     This module generates new multi-level features.
 
@@ -406,7 +406,7 @@ class TableRuleMixin(object):
 
         return "Unknown condition: {}".format(match)
 
-class FERuleBasedProcessor(FEProcessor, TableRuleMixin):
+class HMFERuleBasedProcessor(FEProcessor, TableRuleMixin):
     """
     Given a set of rules it apply the rules to rows
     """
@@ -457,9 +457,9 @@ class FERuleBasedProcessor(FEProcessor, TableRuleMixin):
             
         return result
     
-class FEManager(object):
+class HMFEManager(object):
     """
-    Feature engineering manager. This creates the
+    Hallmark Feature engineering manager. This creates the
     states and runs through all the fe processors
     """
     def __init__(self, conf, *args, **kwargs):
