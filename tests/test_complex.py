@@ -25,7 +25,7 @@ def load_calls():
     
     return df
 
-class SimpleProcessor(hallmarkfe.HMFEProcessor):
+class SimpleProcessor(hallmarkfe.HFEProcessor):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -65,7 +65,7 @@ def test_complex_annotation():
     def summarize(rows):
         rows = rows.to_dict('records')
 
-        state = hallmarkfe.HMFEAtomicState()
+        state = hallmarkfe.HFEAtomicState()
         state.set_data('calls', rows) 
 
         # Now collect all the tags 
@@ -86,7 +86,7 @@ def test_complex_annotation():
 # 7622433748,3207621566,Incoming,2010-12-25,07:16:24.736813,Sat,0:02:41.741499,0db53dd3-eb9c-4344-abc5-c2d74ebc3eec,32.731611,-96.709417
 # 
 
-class SimpleRuleProcessor1(hallmarkfe.HMFERuleBasedProcessor,
+class SimpleRuleProcessor1(hallmarkfe.HFERuleBasedProcessor,
                           hallmarkfe.MetricHandlerMixin):
 
     def __init__(self, *args, **kwargs):
@@ -135,7 +135,7 @@ class SimpleRuleProcessor1(hallmarkfe.HMFERuleBasedProcessor,
             }
         ]
         
-class SimpleRuleProcessor2(hallmarkfe.HMFERuleBasedProcessor,
+class SimpleRuleProcessor2(hallmarkfe.HFERuleBasedProcessor,
                           hallmarkfe.MetricHandlerMixin):
 
     def __init__(self, *args, **kwargs):
@@ -273,7 +273,7 @@ def test_complex_annotation2():
     def summarize(rows):
         rows = rows.to_dict('records')
 
-        state = hallmarkfe.HMFEAtomicState()
+        state = hallmarkfe.HFEAtomicState()
         state.set_data('calls', rows) 
 
         # Now collect all the tags 
@@ -294,7 +294,7 @@ def test_complex_annotation2():
   
     def summarize2(rows):
         rows = rows.to_dict('records')
-        state = hallmarkfe.HMFEAtomicState()
+        state = hallmarkfe.HFEAtomicState()
         state.set_data('memberdates', rows) 
 
         # Now collect all the tags 

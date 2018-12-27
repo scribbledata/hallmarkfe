@@ -5,7 +5,7 @@ logger = logging.getLogger()
 
 mgr1 = None 
 
-class SimpleRuleProcessor1(hallmarkfe.FERuleBasedProcessor,
+class SimpleRuleProcessor1(hallmarkfe.HFERuleBasedProcessor,
                           hallmarkfe.MetricHandlerMixin):
 
     def __init__(self, *args, **kwargs):
@@ -61,13 +61,14 @@ def get_mgr1():
 
     logger.debug("Creating a new mgr")
     
-    mgr1 = hallmarkfe.FEManager({
+    mgr1 = hallmarkfe.HFEManager({
         'processors': ['complex1'] 
-    })
+    }) 
 
     myproc1 = SimpleRuleProcessor1(conf={
         'name': 'complex1',
-        'owner': 'marketing' 
+        'owner': 'marketing',
+        'manager': 'Manager'  
     })
 
     mgr1.add_processor('complex1', myproc1) 
@@ -84,7 +85,7 @@ def reducefunc(g):
 
     # logger.error("One row: " + str(rows[0])) 
     
-    state = hallmarkfe.FEAtomicState()
+    state = hallmarkfe.HFEAtomicState()
     state.set_feature('In', key) 
     state.set_data('calls', rows) 
     

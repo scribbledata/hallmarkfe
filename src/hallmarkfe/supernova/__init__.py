@@ -16,7 +16,7 @@ try:
 except:
     import toolz 
 
-class HMFEAtomicState(object):
+class HFEAtomicState(object):
     """
     Feature State for a unit entity such as a customer. This is updated
     by feature engineering libraries.
@@ -50,7 +50,7 @@ class HMFEAtomicState(object):
         self.state['data'][name] = value
 
 
-class HMFEProcessor(object):
+class HFEProcessor(object):
     """
     This module generates new multi-level features.
 
@@ -406,7 +406,7 @@ class TableRuleMixin(object):
 
         return "Unknown condition: {}".format(match)
 
-class HMFERuleBasedProcessor(HMFEProcessor, TableRuleMixin):
+class HFERuleBasedProcessor(HFEProcessor, TableRuleMixin):
     """
     Given a set of rules it apply the rules to rows
     """
