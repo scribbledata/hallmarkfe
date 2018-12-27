@@ -49,7 +49,7 @@ def test_complex_annotation():
     Test state access 
     """
 
-    mgr = hallmarkfe.HMFEManager({
+    mgr = hallmarkfe.HFEManager({
         'sequence': ['simple1'] 
     })
     myproc = SimpleProcessor(conf={
@@ -105,7 +105,7 @@ class SimpleRuleProcessor1(hallmarkfe.HMFERuleBasedProcessor,
                 'operators': [
                     {
                         'level': 1,
-                        'handler': 'table_apply_rule',
+                        'handler': 'handler_table_apply_rule',
                         'params': {
                             'table': 'calls',
                             'rule': {
@@ -144,7 +144,7 @@ class SimpleRuleProcessor2(hallmarkfe.HMFERuleBasedProcessor,
         self.metric_handlers = {
             'total_match': lambda args, rows: self.toolz_sum(args['match'], rows),
             'avg_match': lambda args, rows: self.toolz_avg(args['match'], rows),
-            'avg2x': lambda args, rows: 2*self.toolz_sum(args['col'], rows),
+            # 'avg2x': lambda args, rows: 2*self.toolz_sum(args['col'], rows),
             'first_day': lambda args, rows: self.toolz_min('CallDate', rows),
             'last_day': lambda args, rows: self.toolz_max('CallDate', rows),
             'dates': lambda args, rows: self.toolz_count('CallDate', rows),
@@ -157,7 +157,7 @@ class SimpleRuleProcessor2(hallmarkfe.HMFERuleBasedProcessor,
                 'operators': [
                     {                
                         'level': 1,
-                        'handler': 'table_apply_rule',
+                        'handler': 'handler_table_apply_rule',
                         'params': {
                             'table': 'memberdates',
                             'match': '.*__xx__total', 
@@ -173,12 +173,12 @@ class SimpleRuleProcessor2(hallmarkfe.HMFERuleBasedProcessor,
                                     'name': 'avg', 
                                     'handler': 'avg_match',
                                 }
-                            ]
+                            ] 
                         }
                     },
                     {                
                         'level': 1,
-                        'handler': 'table_apply_rule',
+                        'handler': 'handler_table_apply_rule',
                         'params': {
                             'table': 'memberdates',
                             'metrics': [
@@ -203,22 +203,22 @@ class SimpleRuleProcessor2(hallmarkfe.HMFERuleBasedProcessor,
                             ]
                         }
                     },
-                    {                
-                        'level': 2,
-                        'handler': 'table_apply_rule',
-                        'params': {
-                            'table': '__computed__',
-                            'metrics': [
-                                {
-                                    'name': 'avg2x', 
-                                    'handler': 'avg2x',
-                                    'args': {
-                                        'col': 'marketing__1__calls__xx__avg'
-                                    }
-                                },
-                            ]
-                        }
-                    }                    
+                    # {                
+                    #     'level': 2,
+                    #     'handler': 'handler_table_apply_rule',
+                    #     'params': {
+                    #         'table': '__computed__',
+                    #         'metrics': [
+                    #             {
+                    #                 'name': 'avg2x', 
+                    #                 'handler': 'avg2x',
+                    #                 'args': {
+                    #                     'col': 'avg2x'
+                    #                 }
+                    #             },
+                    #         ]
+                    #     }
+                    # }                    
                 ]
             }
         ]
@@ -244,7 +244,7 @@ def test_complex_annotation2():
     Test state access 
     """
 
-    mgr1 = hallmarkfe.HMFEManager({
+    mgr1 = hallmarkfe.HFEManager({
         'sequence': ['complex1'] 
     })
 
@@ -256,7 +256,7 @@ def test_complex_annotation2():
 
     mgr1.add_processor('complex1', myproc1) 
 
-    mgr2 = hallmarkfe.HMFEManager({
+    mgr2 = hallmarkfe.HFEManager({
         'sequence': ['complex2'] 
     })
     myproc2 = SimpleRuleProcessor2(conf={
@@ -291,8 +291,7 @@ def test_complex_annotation2():
     assert (df1.loc[df1['level_2'] == 'marketing__1__calls__xx__total'].sum()[0]) == verifydf['Duration'].sum()     
     assert df1['In'].nunique() == uniques 
     assert len(df1.columns) == 4
-
-
+  
     def summarize2(rows):
         rows = rows.to_dict('records')
         state = hallmarkfe.HMFEAtomicState()
@@ -305,10 +304,11 @@ def test_complex_annotation2():
         # Now return the 
         return pd.Series(features)
     
+    df1['avg2x'] = df1[0]
     df2 = df1.groupby(["In"]).apply(summarize2)
     df2 = df2.reset_index()
 
-    print("DF2")
-    print(df2.head())
-    assert df1['marketing__1__calls__xx__total'].sum() == df2['marketing__1__calls__xx__total'].sum()
+    assert (df1.loc[df1['level_2'] == 'marketing__1__calls__xx__total'].sum()[0]) != (df2.loc[df1['level_2'] == 'marketing__1__calls__xx__total'].sum()[0]) 
+
+    # assert df1['marketing__1__calls__xx__total'].sum() == df2['marketing__1__calls__xx__total'].sum()
     assert df1['In'].nunique() == df2['In'].nunique() 

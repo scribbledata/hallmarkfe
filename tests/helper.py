@@ -24,7 +24,7 @@ class SimpleRuleProcessor1(hallmarkfe.FERuleBasedProcessor,
                 'operators': [
                     {
                         'level': 1,
-                        'handler': 'table_apply_rule',
+                        'handler': 'handler_table_apply_rule',
                         'params': {
                             'table': 'calls',
                             'rule': {

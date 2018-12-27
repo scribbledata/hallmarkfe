@@ -246,7 +246,7 @@ class TableRuleMixin(object):
 
         return False
 
-    def table_apply_rule(self, state, rule, details):
+    def handler_table_apply_rule(self, state, rule, details):
 
         rule_name = rule['name']
 
@@ -272,8 +272,8 @@ class TableRuleMixin(object):
         if hasattr(row0, 'asDict'):
             # Special case: Handle Pyspark Row object...
             row0 = row0.asDict()
-            
-        allcols = sorted(list(row0.keys()))
+        row_keys = [str(i) for i in list(row0.keys())]
+        allcols = sorted(row_keys)
 
         cols = []
         if match is not None:
@@ -417,7 +417,7 @@ class HMFERuleBasedProcessor(HMFEProcessor, TableRuleMixin):
         self.metric_handlers = {
         }
         self.operator_handlers = {
-            'table_apply_rule': self.table_apply_rule
+            'handler_table_apply_rule': self.handler_table_apply_rule
         }
 
 
@@ -431,21 +431,18 @@ class HMFERuleBasedProcessor(HMFEProcessor, TableRuleMixin):
         """
 
         # print("Process function of FERuleBasedProcessor")
-        
-        for r in self.rules:
-            for o in r['operators']:
+        for rule in self.rules:
+            for operator in rule['operators']:
 
                 # Look at operators that match a given level
-                if o.get('level', 1) != level:
+                if operator.get('level', 1) != level:
                     continue
 
-                handler_name = o.get('handler')
+                handler_name = operator.get('handler')
                 operator_handler = self.operator_handlers[handler_name]
-
-                # print("Calling handler")
                 
                 # This will update the state inline
-                operator_handler(state, r, details=o)
+                operator_handler(state, rule, details=operator)
 
     def autodoc(self):
         """
@@ -457,9 +454,9 @@ class HMFERuleBasedProcessor(HMFEProcessor, TableRuleMixin):
             
         return result
     
-class HMFEManager(object):
+class HFEManager(object):
     """
-    Hallmark Feature engineering manager. This creates the
+    Hallmark Feature Engineering manager. This creates the
     states and runs through all the fe processors
     """
     def __init__(self, conf, *args, **kwargs):
@@ -495,17 +492,13 @@ class HMFEManager(object):
         self.sequence = sequence
         
     def process(self, festate):
-
         # Collect the processor instances
         processors = [self.processors[n] for n in self.sequence] 
-
-        # print("Processors", processors)
         
         # Go through all the processors for all levels of
         # computation...
         for level in [1,2,3,4]:
             computed = festate.get_all_features()
-
             # Create a table that the rules can use..
             festate.set_data('__computed__', [computed])
             for proc in processors:
