@@ -1,5 +1,6 @@
 import logging
 import  hallmarkfe.supernova  as hallmarkfe
+import os, json
 
 logger = logging.getLogger()
 
@@ -16,43 +17,16 @@ class SimpleRuleProcessor1(hallmarkfe.HFERuleBasedProcessor,
             'dates': lambda args, rows: self.toolz_count('CallDate', rows),
         }
         
-        self.rules = [
-            {
-                'name': 'calls',
-                'description': 'Large duration calls',
-                'notes': 'Includes only those that are longer than 2 mins',
-                'operators': [
-                    {
-                        'level': 1,
-                        'handler': 'handler_table_apply_rule',
-                        'params': {
-                            'table': 'calls',
-                            'rule': {
-                                'column': 'DurationSeconds',
-                                'match': 'GT',
-                                'values': 60
-                            },
-                            'metrics': [
-                                {
-                                    'name': 'total',
-                                    'handler': 'total',
-                                    'args': {
-                                        'feature': "%(owner)s__%(level)s__%(rule_name)s__xx__%(suffix)s",
-                                    }
-                                },
-                                {
-                                    'name': 'dates',
-                                    'handler': 'dates',
-                                    'args': {
-                                        'suffix': 'days',
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                ]
+        testsdir = os.path.join(os.environ['ENRICH_DATA'],
+                                    'hallmark', 'specs')
+        self.datasets = { 
+            'complex_data': { 
+                'name': 'complex', 
+                'metadata': os.path.join(testsdir, 'complex1.json'),
+                'params': {
+                }
             }
-        ]
+        }
         
 def get_mgr1(): 
     global mgr1
@@ -70,6 +44,9 @@ def get_mgr1():
         'owner': 'marketing',
         'manager': 'Manager'  
     })
+
+    with open(myproc1.datasets['complex_data']['metadata']) as json_file:  
+        myproc1.rules = json.load(json_file)['rules']
 
     mgr1.add_processor('complex1', myproc1) 
     return mgr1
