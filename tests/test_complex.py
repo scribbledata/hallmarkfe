@@ -97,43 +97,16 @@ class SimpleRuleProcessor1(hallmarkfe.HFERuleBasedProcessor,
             'dates': lambda args, rows: self.toolz_count('CallDate', rows),
         }
         
-        self.rules = [
-            {
-                'name': 'calls',
-                'description': 'Large duration calls',
-                'notes': 'Includes only those that are longer than 2 mins',
-                'operators': [
-                    {
-                        'level': 1,
-                        'handler': 'handler_table_apply_rule',
-                        'params': {
-                            'table': 'calls',
-                            'rule': {
-                                'column': 'Duration',
-                                'match': 'GT',
-                                'values': 60
-                            },
-                            'metrics': [
-                                {
-                                    'name': 'total',
-                                    'handler': 'total',
-                                    'args': {
-                                        'feature': "%(owner)s__%(level)s__%(rule_name)s__xx__%(suffix)s",
-                                    }
-                                },
-                                {
-                                    'name': 'dates',
-                                    'handler': 'dates',
-                                    'args': {
-                                        'suffix': 'days',
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                ]
+        testsdir = os.path.join(os.environ['ENRICH_DATA'],
+                                    'hallmark', 'specs')
+        self.datasets = { 
+            'complex_data': { 
+                'name': 'complex', 
+                'metadata': os.path.join(testsdir, 'complex1.json'),
+                'params': {
+                }
             }
-        ]
+        }
         
 class SimpleRuleProcessor2(hallmarkfe.HFERuleBasedProcessor,
                           hallmarkfe.MetricHandlerMixin):
@@ -144,84 +117,20 @@ class SimpleRuleProcessor2(hallmarkfe.HFERuleBasedProcessor,
         self.metric_handlers = {
             'total_match': lambda args, rows: self.toolz_sum(args['match'], rows),
             'avg_match': lambda args, rows: self.toolz_avg(args['match'], rows),
-            # 'avg2x': lambda args, rows: 2*self.toolz_sum(args['col'], rows),
             'first_day': lambda args, rows: self.toolz_min('CallDate', rows),
             'last_day': lambda args, rows: self.toolz_max('CallDate', rows),
             'dates': lambda args, rows: self.toolz_count('CallDate', rows),
         }
-        self.rules = [
-            {
-                'name': 'calls',
-                'description': 'Large duration calls',
-                'notes': 'Includes only those that are longer than 2 mins',
-                'operators': [
-                    {                
-                        'level': 1,
-                        'handler': 'handler_table_apply_rule',
-                        'params': {
-                            'table': 'memberdates',
-                            'match': '.*__xx__total', 
-                            'metrics': [
-                                {
-                                    'name': 'total', 
-                                    'handler': 'total_match',
-                                    'args': {
-                                        'feature': '%(match)s'
-                                    }
-                                },
-                                {
-                                    'name': 'avg', 
-                                    'handler': 'avg_match',
-                                }
-                            ] 
-                        }
-                    },
-                    {                
-                        'level': 1,
-                        'handler': 'handler_table_apply_rule',
-                        'params': {
-                            'table': 'memberdates',
-                            'metrics': [
-                                {
-                                    'name': 'dates', 
-                                    'handler': 'dates',
-                                },
-                                {
-                                    'name': 'first_day', 
-                                    'handler': 'first_day',
-                                    'args': {
-                                        'suffix': 'firstday' 
-                                    }
-                                },
-                                {
-                                    'name': 'last_day', 
-                                    'handler': 'last_day',
-                                    'args': {
-                                        'suffix': 'lastday' 
-                                    }
-                                },                                
-                            ]
-                        }
-                    },
-                    # {                
-                    #     'level': 2,
-                    #     'handler': 'handler_table_apply_rule',
-                    #     'params': {
-                    #         'table': '__computed__',
-                    #         'metrics': [
-                    #             {
-                    #                 'name': 'avg2x', 
-                    #                 'handler': 'avg2x',
-                    #                 'args': {
-                    #                     'col': 'avg2x'
-                    #                 }
-                    #             },
-                    #         ]
-                    #     }
-                    # }                    
-                ]
+        testsdir = os.path.join(os.environ['ENRICH_DATA'],
+                                    'hallmark', 'specs')
+        self.datasets = { 
+            'complex_data': { 
+                'name': 'complex', 
+                'metadata': os.path.join(testsdir, 'complex2.json'),
+                'params': {
+                }
             }
-        ]
+        }
             
     def generate_feature_name(self, args):
         """
@@ -254,6 +163,9 @@ def test_complex_annotation2():
         'manager': 'manager'
     })
 
+    with open(myproc1.datasets['complex_data']['metadata']) as json_file:  
+        myproc1.rules = json.load(json_file)['rules']
+
     mgr1.add_processor('complex1', myproc1) 
 
     mgr2 = hallmarkfe.HFEManager({
@@ -264,6 +176,10 @@ def test_complex_annotation2():
         'owner': 'marketing',
         'manager': 'manager'
     })
+
+    with open(myproc2.datasets['complex_data']['metadata']) as json_file:  
+        myproc2.rules = json.load(json_file)['rules']
+
     mgr2.add_processor('complex2', myproc2) 
 
     df = load_calls()     
@@ -309,6 +225,4 @@ def test_complex_annotation2():
     df2 = df2.reset_index()
 
     assert (df1.loc[df1['level_2'] == 'marketing__1__calls__xx__total'].sum()[0]) != (df2.loc[df1['level_2'] == 'marketing__1__calls__xx__total'].sum()[0]) 
-
-    # assert df1['marketing__1__calls__xx__total'].sum() == df2['marketing__1__calls__xx__total'].sum()
     assert df1['In'].nunique() == df2['In'].nunique() 
