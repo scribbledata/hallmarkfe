@@ -308,6 +308,7 @@ class TableRuleMixin(object):
                 
                 mhandler = mparams['handler'] 
                 mhandler = self.metric_handlers[mhandler] 
+                stream_type = self.stream_type
 
                 # Insert extra information 
                 margs.update({
@@ -316,12 +317,13 @@ class TableRuleMixin(object):
                     'name': mname, 
                     'level': level,
                     'match': col,
+                    'stream_type': stream_type,
                 })
 
                 # If no suffix is specified, then use the name..
                 if 'suffix' not in margs:
                     margs['suffix'] = mname
-                
+
                 if 'feature' not in margs: 
                     margs['feature'] = "tag__%(owner)s__%(rule_name)s__%(level)s__%(suffix)s"
                     
@@ -414,6 +416,7 @@ class HFERuleBasedProcessor(HFEProcessor, TableRuleMixin):
         super().__init__(*args, **kwargs)
         self.prefix_template = "tag_%(owner)s_%(name)s_%(level)s_v%(version)s_rules_"
         self.rules = []
+        self.stream_type=""
         self.metric_handlers = {
         }
         self.operator_handlers = {

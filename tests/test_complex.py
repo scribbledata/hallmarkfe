@@ -54,7 +54,7 @@ def test_complex_annotation():
     })
     myproc = SimpleProcessor(conf={
         'name': 'simple1',
-        'owner': 'Dilloy',
+        'owner': 'Scribble',
         'manager': 'Manager'       
     })
     mgr.add_processor('simple1', myproc) 
@@ -96,9 +96,10 @@ class SimpleRuleProcessor1(hallmarkfe.HFERuleBasedProcessor,
             'total': lambda args, rows: self.toolz_sum('Duration', rows),
             'dates': lambda args, rows: self.toolz_count('CallDate', rows),
         }
-        
-        testsdir = os.path.join(os.environ['ENRICH_DATA'],
-                                    'hallmark', 'specs')
+
+        self.stream_type = "batch"
+        testsdir = os.path.join(thisdir, 'fixtures','specs')
+
         self.datasets = { 
             'complex_data': { 
                 'name': 'complex', 
@@ -121,8 +122,10 @@ class SimpleRuleProcessor2(hallmarkfe.HFERuleBasedProcessor,
             'last_day': lambda args, rows: self.toolz_max('CallDate', rows),
             'dates': lambda args, rows: self.toolz_count('CallDate', rows),
         }
-        testsdir = os.path.join(os.environ['ENRICH_DATA'],
-                                    'hallmark', 'specs')
+        self.stream_type = "realtime"
+
+        testsdir = os.path.join(thisdir, 'fixtures','specs')
+
         self.datasets = { 
             'complex_data': { 
                 'name': 'complex', 
@@ -217,7 +220,7 @@ def test_complex_annotation2():
         mgr2.process(state) 
 
         features = state.get_all_features()
-        
+
         # Now return the dataframe
         return pd.Series(features)
     
