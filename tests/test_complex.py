@@ -102,7 +102,7 @@ class SimpleRuleProcessor1(hallmarkfe.HFERuleBasedProcessor,
         self.datasets = { 
             'complex_data': { 
                 'name': 'complex', 
-                'metadata': os.path.join(testsdir, 'complex1.json'),
+                'input': os.path.join(testsdir, 'complex1.json'),
                 'params': {
                 }
             }
@@ -126,7 +126,7 @@ class SimpleRuleProcessor2(hallmarkfe.HFERuleBasedProcessor,
         self.datasets = { 
             'complex_data': { 
                 'name': 'complex', 
-                'metadata': os.path.join(testsdir, 'complex2.json'),
+                'input': os.path.join(testsdir, 'complex2.json'),
                 'params': {
                 }
             }
@@ -163,7 +163,7 @@ def test_complex_annotation2():
         'manager': 'manager'
     })
 
-    with open(myproc1.datasets['complex_data']['metadata']) as json_file:  
+    with open(myproc1.datasets['complex_data']['input']) as json_file:  
         myproc1.rules = json.load(json_file)['rules']
 
     mgr1.add_processor('complex1', myproc1) 
@@ -177,7 +177,7 @@ def test_complex_annotation2():
         'manager': 'manager'
     })
 
-    with open(myproc2.datasets['complex_data']['metadata']) as json_file:  
+    with open(myproc2.datasets['complex_data']['input']) as json_file:  
         myproc2.rules = json.load(json_file)['rules']
 
     mgr2.add_processor('complex2', myproc2) 
@@ -217,12 +217,12 @@ def test_complex_annotation2():
         mgr2.process(state) 
 
         features = state.get_all_features()
-        # Now return the 
+        
+        # Now return the dataframe
         return pd.Series(features)
     
     df1['avg2x'] = df1[0]
     df2 = df1.groupby(["In"]).apply(summarize2)
     df2 = df2.reset_index()
-
     assert (df1.loc[df1['level_2'] == 'marketing__1__calls__xx__total'].sum()[0]) != (df2.loc[df1['level_2'] == 'marketing__1__calls__xx__total'].sum()[0]) 
     assert df1['In'].nunique() == df2['In'].nunique() 
