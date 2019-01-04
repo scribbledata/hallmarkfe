@@ -13,18 +13,17 @@ tests_requires = [
 ]
 setup(name='hallmarkfe',
       version='0.1s',
-      description='hallmarkfe package',
-      url='https://github.com/pingali/hallmark', 
+      description='Standardized feature specification and implementation', 
+      url='https://github.com/pingali/hallmarkfe', 
       author='Venkata Pingali',
       author_email='pingali@scribbledata.io', 
-      license='None',
+      data_files = [("", ["LICENSE.txt"])],      
       install_requires=requires,
       tests_requires=tests_requires,
-      packages=find_packages('src'),
-      package_dir={'': 'src'},
+      packages=['hallmarkfe'],
       zip_safe=True,
       include_package_data=True,
       entry_points={
-          'Contrib.asset': ['hallmarkfe=hallmarkfe'],
+          'console_scripts': ['hfe=hallmarkfe.cli:main'],          
       },
 )
