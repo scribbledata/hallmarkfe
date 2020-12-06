@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Compiled source #
 ###################
 *.com
@@ -69,3 +70,20 @@ cleaned
 raw
 csv
 venv
+=======
+*.egg
+*.egg/
+*.egg-info/
+*.pyc
+.tox/
+_build/
+build
+dist/
+.coverage
+.cache
+**htmlcov**
+*requirement*.txt
+*.pickle
+*~
+__pycache__
+>>>>>>> 9c2e4ba7a27d033f201f4f7493648ed2b26341f3
